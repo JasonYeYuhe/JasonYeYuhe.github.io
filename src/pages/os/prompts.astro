@@ -1,0 +1,99 @@
+---
+import Base from "../../layouts/Base.astro";
+import { getEntry, render } from "astro:content";
+
+const entry = await getEntry("os", "prompts");
+if (!entry) throw new Error("os/prompts entry not found");
+const { Content } = await render(entry);
+const d = entry.data;
+---
+<Base title={`${d.title} · Founder OS`} description={d.description}>
+  <section class="mx-auto max-w-3xl px-6 pt-20 pb-8">
+    <p class="text-sm text-muted tracking-wider uppercase">
+      <a href="/os" class="hover:text-accent">Founder OS</a> · 工具箱
+    </p>
+    <h1 class="font-display mt-3 leading-tight text-ink" style="font-size: var(--text-display-xl)">
+      {d.title}
+    </h1>
+    {d.subtitle && <p class="mt-2 text-muted italic">{d.subtitle}</p>}
+    <p class="mt-4 text-sm text-muted">
+      更新于 {d.updated.toISOString().slice(0, 10)} · 点击代码块右上角「复制」即可使用
+    </p>
+  </section>
+
+  <hr class="border-rule mx-auto max-w-3xl" />
+
+  <article class="prose-zh prompts-page mx-auto px-6 py-16">
+    <Content />
+  </article>
+
+  <div class="mx-auto max-w-3xl px-6 pb-24">
+    <div class="border-t border-rule pt-6 flex items-baseline justify-between text-sm">
+      <a href="/os" class="text-ink-soft hover:text-accent">← 回 Founder OS</a>
+      <a href="/library" class="text-accent hover:text-ink">资料库 →</a>
+    </div>
+  </div>
+</Base>
+
+<style is:global>
+  .prompts-page pre {
+    background: var(--color-paper-soft);
+    border: 1px solid var(--color-rule);
+    border-radius: 6px;
+    padding: 1rem 1.1rem;
+    overflow-x: auto;
+    font-size: 0.875rem;
+    line-height: 1.7;
+    position: relative;
+    margin: 1.25rem 0;
+  }
+  .prompts-page pre code {
+    background: transparent;
+    padding: 0;
+    color: var(--color-ink);
+    font-family: var(--font-mono);
+  }
+  .prompts-page .copy-btn {
+    position: absolute;
+    top: 0.5rem;
+    right: 0.5rem;
+    font-size: 0.75rem;
+    padding: 0.25rem 0.6rem;
+    border: 1px solid var(--color-rule);
+    border-radius: 4px;
+    background: var(--color-paper);
+    color: var(--color-muted);
+    cursor: pointer;
+    transition: all 0.15s ease;
+    font-family: var(--font-sans);
+  }
+  .prompts-page .copy-btn:hover { color: var(--color-accent); border-color: var(--color-accent); }
+  .prompts-page .copy-btn.done { color: var(--color-accent); border-color: var(--color-accent); }
+</style>
+
+<script>
+  // Add a "复制" button to every <pre> in the prompts article
+  const blocks = document.querySelectorAll(".prompts-page pre");
+  blocks.forEach((pre) => {
+    const btn = document.createElement("button");
+    btn.className = "copy-btn";
+    btn.type = "button";
+    btn.textContent = "复制";
+    btn.addEventListener("click", async () => {
+      const code = pre.querySelector("code");
+      const text = (code ?? pre).textContent ?? "";
+      try {
+        await navigator.clipboard.writeText(text);
+        btn.textContent = "已复制";
+        btn.classList.add("done");
+        setTimeout(() => {
+          btn.textContent = "复制";
+          btn.classList.remove("done");
+        }, 1600);
+      } catch {
+        btn.textContent = "复制失败";
+      }
+    });
+    pre.appendChild(btn);
+  });
+</script>

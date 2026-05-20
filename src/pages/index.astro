@@ -36,7 +36,7 @@ const items = (await getCollection("library", (e) => !e.data.draft))
       <p class="font-display text-2xl text-ink">资料库</p>
       <p class="mt-3 text-sm text-muted leading-relaxed">
         Anthropic、Claude、OpenAI 等一线公开材料的中文译本与注解。
-        以官方为锚、以可用为标尺，**原文链接 + GitHub 全译 + 我的注解**三合一。
+        原文链接 + GitHub 全译 + 我的注解三合一。
       </p>
       <a href="/library" class="mt-4 inline-block text-sm text-accent hover:text-ink">浏览 →</a>
     </div>
@@ -44,15 +44,17 @@ const items = (await getCollection("library", (e) => !e.data.draft))
       <p class="font-display text-2xl text-ink">Founder OS</p>
       <p class="mt-3 text-sm text-muted leading-relaxed">
         把判断、验证、范围、上下文、自动化组织成一套操作系统的方法论。
-        附可复制 Prompt。<span class="text-ink-soft">（Phase 2）</span>
+        附 <a href="/os/prompts" class="underline underline-offset-4 decoration-1 hover:text-accent">8 段可复制 prompt</a>。
       </p>
+      <a href="/os" class="mt-4 inline-block text-sm text-accent hover:text-ink">读 GUIDE →</a>
     </div>
     <div>
-      <p class="font-display text-2xl text-ink">Build & Writing</p>
+      <p class="font-display text-2xl text-ink">Build</p>
       <p class="mt-3 text-sm text-muted leading-relaxed">
-        在做的项目与硬指标；文章与小红书精选。
-        <span class="text-ink-soft">（Phase 3）</span>
+        在做与做过的项目：Playbook 中文全译、Founder OS、这个站本身。
+        指标用数字说话。
       </p>
+      <a href="/build" class="mt-4 inline-block text-sm text-accent hover:text-ink">看项目 →</a>
     </div>
   </section>
 

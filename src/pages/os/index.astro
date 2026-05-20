@@ -1,0 +1,35 @@
+---
+import Base from "../../layouts/Base.astro";
+import { getEntry, render } from "astro:content";
+
+const entry = await getEntry("os", "guide");
+if (!entry) throw new Error("os/guide entry not found");
+const { Content } = await render(entry);
+const d = entry.data;
+---
+<Base title={`${d.title} · Jason Ye`} description={d.description}>
+  <section class="mx-auto max-w-3xl px-6 pt-20 pb-8">
+    <p class="text-sm text-muted tracking-wider uppercase">Founder OS</p>
+    <h1 class="font-display mt-3 leading-tight text-ink" style="font-size: var(--text-display-xl)">
+      {d.title}
+    </h1>
+    {d.subtitle && <p class="mt-2 text-muted italic">{d.subtitle}</p>}
+    <p class="mt-4 text-sm text-muted">
+      更新于 {d.updated.toISOString().slice(0, 10)} ·
+      <a href="/os/prompts" class="text-accent hover:text-ink ml-2">可复制 Prompts ↗</a>
+    </p>
+  </section>
+
+  <hr class="border-rule mx-auto max-w-3xl" />
+
+  <article class="prose-zh mx-auto px-6 py-16">
+    <Content />
+  </article>
+
+  <div class="mx-auto max-w-3xl px-6 pb-24">
+    <div class="border-t border-rule pt-6 flex items-baseline justify-between text-sm">
+      <a href="/library" class="text-ink-soft hover:text-accent">← 回 资料库</a>
+      <a href="/os/prompts" class="text-accent hover:text-ink">可复制 Prompts →</a>
+    </div>
+  </div>
+</Base>

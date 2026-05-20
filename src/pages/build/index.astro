@@ -1,0 +1,51 @@
+---
+import Base from "../../layouts/Base.astro";
+import { getCollection } from "astro:content";
+
+const projects = (await getCollection("projects", (e) => !e.data.draft))
+  .sort((a, b) => a.data.order - b.data.order);
+---
+<Base title="Build · Jason Ye" description="正在做与已经做过的项目。">
+  <section class="mx-auto max-w-5xl px-6 pt-20 pb-10">
+    <p class="text-sm text-muted tracking-wider uppercase">Build</p>
+    <h1 class="font-display mt-3 leading-tight text-ink" style="font-size: var(--text-display-xl)">
+      在做与做过
+    </h1>
+    <p class="mt-4 max-w-2xl text-ink-soft leading-relaxed">
+      只列我自己反复使用、能讲清来龙去脉的项目。
+      指标用数字说话；不再用「即将上线」「敬请期待」。
+    </p>
+  </section>
+
+  <section class="mx-auto max-w-5xl px-6 pb-24">
+    <ul class="divide-y divide-rule border-t border-rule">
+      {projects.map((p, i) => (
+        <li class="py-8 grid md:grid-cols-[4rem_1fr_auto] gap-6 items-baseline">
+          <div class="font-display text-3xl text-muted tabular-nums">{String(i + 1).padStart(2, "0")}</div>
+          <div>
+            <p class="text-xs text-muted tracking-wider uppercase">{p.data.category} · {p.data.year}</p>
+            <p class="font-display text-2xl text-ink mt-1 leading-tight">{p.data.name}</p>
+            <p class="mt-2 text-sm text-ink-soft leading-relaxed">{p.data.oneLiner}</p>
+            {p.data.metric && (
+              <p class="mt-3 inline-block text-xs px-2 py-0.5 border border-rule rounded-full text-muted">
+                {p.data.metric}
+              </p>
+            )}
+          </div>
+          <div class="flex md:flex-col gap-3 text-sm">
+            {p.data.url && (
+              <a href={p.data.url} rel="noreferrer" class="text-accent hover:text-ink">打开 ↗</a>
+            )}
+            {p.data.repo && (
+              <a href={p.data.repo} rel="noreferrer" class="text-ink-soft hover:text-accent">GitHub ↗</a>
+            )}
+          </div>
+        </li>
+      ))}
+    </ul>
+
+    <p class="mt-10 text-xs text-muted max-w-2xl">
+      想合作或邀我做分享 · <a href="mailto:yyyyy.yeyuhe@gmail.com" class="text-accent hover:text-ink">yyyyy.yeyuhe@gmail.com</a>
+    </p>
+  </section>
+</Base>

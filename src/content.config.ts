@@ -20,4 +20,31 @@ const library = defineCollection({
   }),
 });
 
-export const collections = { library };
+const os = defineCollection({
+  loader: glob({ pattern: "**/*.{md,mdx}", base: "./src/content/os" }),
+  schema: z.object({
+    title: z.string(),
+    subtitle: z.string().optional(),
+    description: z.string(),
+    order: z.number().default(99),
+    updated: z.coerce.date(),
+    draft: z.boolean().default(false),
+  }),
+});
+
+const projects = defineCollection({
+  loader: glob({ pattern: "**/*.{md,mdx}", base: "./src/content/projects" }),
+  schema: z.object({
+    name: z.string(),
+    oneLiner: z.string(),
+    year: z.string(),                       // "2026" or "2025–2026"
+    category: z.string(),                   // 例如 "Playbook" / "Tooling"
+    metric: z.string().optional(),          // "GitHub · 36 页全译"
+    url: z.string().url().optional(),
+    repo: z.string().url().optional(),
+    order: z.number().default(99),
+    draft: z.boolean().default(false),
+  }),
+});
+
+export const collections = { library, os, projects };
