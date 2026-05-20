@@ -1,0 +1,30 @@
+---
+const path = Astro.url.pathname.replace(/\/$/, "") || "/";
+const nav = [
+  { href: "/library", label: "Library" },
+  { href: "/about",   label: "About" },
+  { href: "/now",     label: "Now" },
+];
+const isActive = (href: string) =>
+  href === "/" ? path === "/" : path === href || path.startsWith(href + "/");
+---
+<header class="border-b border-rule">
+  <div class="mx-auto max-w-5xl px-6 py-6 flex items-baseline justify-between">
+    <a href="/" class="font-display text-xl tracking-tight hover:text-accent">
+      Jason Ye <span class="text-muted font-sans text-sm">· Founder OS</span>
+    </a>
+    <nav class="flex gap-7 text-sm">
+      {nav.map(({ href, label }) => (
+        <a
+          href={href}
+          class:list={[
+            "transition-colors",
+            isActive(href) ? "text-accent" : "text-ink-soft hover:text-accent",
+          ]}
+        >
+          {label}
+        </a>
+      ))}
+    </nav>
+  </div>
+</header>

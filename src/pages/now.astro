@@ -1,0 +1,40 @@
+---
+import Base from "../layouts/Base.astro";
+const updated = "2026-05-20";
+---
+<Base title="Now · Jason Ye" description="Jason 最近在做的事。">
+  <section class="mx-auto max-w-3xl px-6 pt-20 pb-12">
+    <p class="text-sm text-muted tracking-wider uppercase">Now</p>
+    <h1 class="font-display mt-3 leading-tight text-ink" style="font-size: var(--text-display-xl)">
+      最近在做
+    </h1>
+    <p class="mt-2 text-muted">更新于 {updated}</p>
+  </section>
+
+  <article class="prose-zh mx-auto px-6 pb-24">
+    <h2>本周</h2>
+    <ul>
+      <li>把 Anthropic《创始人手册》36 页全本 1:1 重排成中文版，已上线 GitHub。</li>
+      <li>搭这个个人站，作为 Library + Founder OS 的主入口。</li>
+      <li>梳理小红书原生分发流水线：一份 Markdown → 网页 + PDF + 小红书图。</li>
+    </ul>
+
+    <h2>这个月</h2>
+    <ul>
+      <li>Library 增加 2–3 篇一线官方资料的中文译本与注解。</li>
+      <li>Founder OS 的 GUIDE / PROMPTS 网页化，放进 <code>/os</code>。</li>
+      <li>把已有项目（含硬指标）整理成 Build 页。</li>
+    </ul>
+
+    <h2>不在做的事</h2>
+    <ul>
+      <li>不接定制开发；不做付费咨询（Phase 3 再考虑）。</li>
+      <li>不做内容搬运；只做我用过、能自圆其说的东西。</li>
+    </ul>
+
+    <p class="text-sm text-muted">
+      此页参考 <a href="https://nownownow.com/about" rel="noreferrer">nownownow.com</a> 的「Now Page」习惯，
+      代替关于页里那些不会更新的「最新动态」。
+    </p>
+  </article>
+</Base>

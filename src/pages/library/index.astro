@@ -1,0 +1,69 @@
+---
+import Base from "../../layouts/Base.astro";
+import { getCollection } from "astro:content";
+
+const items = (await getCollection("library", (e) => !e.data.draft))
+  .sort((a, b) => +b.data.date - +a.data.date);
+
+const statusLabel: Record<string, string> = {
+  translation: "全译",
+  notes:       "注解",
+  "link-only": "仅指引",
+};
+---
+<Base title="Library · Jason Ye" description="一线 AI 资料的中文译本与注解。">
+  <section class="mx-auto max-w-5xl px-6 pt-20 pb-10">
+    <p class="text-sm text-muted tracking-wider uppercase">Library</p>
+    <h1 class="font-display mt-3 leading-tight text-ink" style="font-size: var(--text-display-xl)">
+      资料库
+    </h1>
+    <p class="mt-4 max-w-2xl text-ink-soft leading-relaxed">
+      Anthropic、Claude、OpenAI 等一线公司公开材料的中文译本与我的注解。
+      官方原文为锚，全译走 GitHub，站内只放摘要与可执行的解读。
+    </p>
+  </section>
+
+  <section class="mx-auto max-w-5xl px-6 pb-24">
+    <ul class="divide-y divide-rule border-t border-rule">
+      {items.map((item) => (
+        <li class="py-8 grid md:grid-cols-[12rem_1fr_auto] gap-6 items-baseline">
+          <div class="text-sm text-muted">
+            <p class="text-ink-soft">{item.data.source}</p>
+            <p>{item.data.date.toISOString().slice(0, 10)}</p>
+            <p class="mt-1 inline-block px-2 py-0.5 border border-rule rounded-full text-xs">
+              {statusLabel[item.data.status] ?? item.data.status}
+            </p>
+          </div>
+          <div>
+            <a href={`/library/${item.id}`} class="font-display text-2xl text-ink hover:text-accent leading-tight">
+              {item.data.title}
+            </a>
+            {item.data.originalTitle && (
+              <p class="mt-1 text-sm text-muted italic">{item.data.originalTitle}</p>
+            )}
+            <p class="mt-3 text-sm text-ink-soft leading-relaxed">{item.data.summary}</p>
+            <div class="mt-3 flex flex-wrap gap-2 text-xs text-muted">
+              {item.data.stage.map((s) => (
+                <span class="px-2 py-0.5 border border-rule rounded-full">{s}</span>
+              ))}
+            </div>
+          </div>
+          <div class="flex md:flex-col gap-3 text-sm">
+            <a href={`/library/${item.id}`} class="text-accent hover:text-ink">读注解 →</a>
+            {item.data.pdf && (
+              <a href={item.data.pdf} class="text-ink-soft hover:text-accent" rel="noreferrer">PDF ↗</a>
+            )}
+            {item.data.repo && (
+              <a href={item.data.repo} class="text-ink-soft hover:text-accent" rel="noreferrer">GitHub ↗</a>
+            )}
+          </div>
+        </li>
+      ))}
+    </ul>
+
+    <p class="mt-12 text-xs text-muted max-w-2xl">
+      站内不托管第三方原作的整本内容；译本与下载请走对应 GitHub 仓库。
+      原作版权归各原作者所有；任何条目，收到权利人请求即删。
+    </p>
+  </section>
+</Base>

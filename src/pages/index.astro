@@ -1,0 +1,89 @@
+---
+import Base from "../layouts/Base.astro";
+import { getCollection } from "astro:content";
+
+const items = (await getCollection("library", (e) => !e.data.draft))
+  .sort((a, b) => +b.data.date - +a.data.date)
+  .slice(0, 3);
+---
+<Base title="Jason Ye · Founder OS" description="把一线 AI 原始资料做成中文创始人可用的操作系统。资料库 · 方法论 · 在做的项目。">
+  <!-- Hero -->
+  <section class="mx-auto max-w-5xl px-6 pt-20 pb-24">
+    <p class="text-sm text-muted tracking-wider uppercase">Founder OS · 2026</p>
+    <h1 class="font-display mt-4 leading-[1.05] tracking-tight text-ink"
+        style="font-size: var(--text-display-2xl)">
+      把一线 AI 原始资料<br/>做成中文创始人<br/>可用的操作系统。
+    </h1>
+    <p class="mt-8 max-w-2xl text-lg text-ink-soft leading-relaxed">
+      我是 Jason。这里收集我整理的官方 AI 资料中文译本与注解，记录我在用 Claude、Codex 与
+      agent 工作流做产品时沉淀下来的方法论；同时把它做成可以原生分发到小红书的内容资产。
+    </p>
+    <div class="mt-10 flex flex-wrap gap-x-8 gap-y-3 text-sm">
+      <a href="/library" class="text-accent underline underline-offset-4 decoration-1 hover:text-ink">
+        进入资料库 →
+      </a>
+      <a href="/about" class="text-ink-soft hover:text-accent">关于我</a>
+      <a href="/now" class="text-ink-soft hover:text-accent">最近在做</a>
+      <a href="https://github.com/JasonYeYuhe" class="text-ink-soft hover:text-accent">GitHub ↗</a>
+    </div>
+  </section>
+
+  <hr class="border-rule" />
+
+  <!-- What's here -->
+  <section class="mx-auto max-w-5xl px-6 py-20 grid gap-12 md:grid-cols-3">
+    <div>
+      <p class="font-display text-2xl text-ink">资料库</p>
+      <p class="mt-3 text-sm text-muted leading-relaxed">
+        Anthropic、Claude、OpenAI 等一线公开材料的中文译本与注解。
+        以官方为锚、以可用为标尺，**原文链接 + GitHub 全译 + 我的注解**三合一。
+      </p>
+      <a href="/library" class="mt-4 inline-block text-sm text-accent hover:text-ink">浏览 →</a>
+    </div>
+    <div>
+      <p class="font-display text-2xl text-ink">Founder OS</p>
+      <p class="mt-3 text-sm text-muted leading-relaxed">
+        把判断、验证、范围、上下文、自动化组织成一套操作系统的方法论。
+        附可复制 Prompt。<span class="text-ink-soft">（Phase 2）</span>
+      </p>
+    </div>
+    <div>
+      <p class="font-display text-2xl text-ink">Build & Writing</p>
+      <p class="mt-3 text-sm text-muted leading-relaxed">
+        在做的项目与硬指标；文章与小红书精选。
+        <span class="text-ink-soft">（Phase 3）</span>
+      </p>
+    </div>
+  </section>
+
+  <hr class="border-rule" />
+
+  <!-- Latest from Library -->
+  <section class="mx-auto max-w-5xl px-6 py-20">
+    <div class="flex items-baseline justify-between mb-10">
+      <h2 class="font-display text-3xl text-ink">最新</h2>
+      <a href="/library" class="text-sm text-accent hover:text-ink">全部 →</a>
+    </div>
+    <ul class="divide-y divide-rule">
+      {items.map((item) => (
+        <li class="py-6 grid md:grid-cols-[10rem_1fr] gap-4">
+          <div class="text-sm text-muted">
+            <p>{item.data.source}</p>
+            <p>{item.data.date.toISOString().slice(0, 10)}</p>
+          </div>
+          <div>
+            <a href={`/library/${item.id}`} class="block font-display text-xl text-ink hover:text-accent">
+              {item.data.title}
+            </a>
+            <p class="mt-2 text-sm text-ink-soft leading-relaxed">{item.data.summary}</p>
+            <div class="mt-3 flex flex-wrap gap-2 text-xs text-muted">
+              {item.data.stage.map((s) => (
+                <span class="px-2 py-0.5 border border-rule rounded-full">{s}</span>
+              ))}
+            </div>
+          </div>
+        </li>
+      ))}
+    </ul>
+  </section>
+</Base>

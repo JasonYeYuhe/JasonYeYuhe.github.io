@@ -1,0 +1,62 @@
+---
+import Base from "../../layouts/Base.astro";
+import { getCollection, render } from "astro:content";
+
+export async function getStaticPaths() {
+  const entries = await getCollection("library", (e) => !e.data.draft);
+  return entries.map((entry) => ({ params: { slug: entry.id }, props: { entry } }));
+}
+
+const { entry } = Astro.props;
+const { Content } = await render(entry);
+const d = entry.data;
+---
+<Base title={`${d.title} · Library`} description={d.summary}>
+  <section class="mx-auto max-w-3xl px-6 pt-20 pb-8">
+    <p class="text-sm text-muted tracking-wider uppercase">
+      <a href="/library" class="hover:text-accent">Library</a> · {d.source}
+    </p>
+    <h1 class="font-display mt-4 leading-tight text-ink" style="font-size: var(--text-display-xl)">
+      {d.title}
+    </h1>
+    {d.originalTitle && (
+      <p class="mt-2 text-muted italic">{d.originalTitle}</p>
+    )}
+    <p class="mt-4 text-sm text-muted">
+      整理于 {d.date.toISOString().slice(0, 10)} · {d.lang === "zh" ? "中文" : d.lang}
+    </p>
+
+    <div class="mt-6 flex flex-wrap gap-2 text-xs text-muted">
+      {d.stage.map((s: string) => (
+        <span class="px-2 py-0.5 border border-rule rounded-full">{s}</span>
+      ))}
+      {d.tags.map((t: string) => (
+        <span class="px-2 py-0.5 text-muted">#{t}</span>
+      ))}
+    </div>
+
+    <div class="mt-8 flex flex-wrap gap-x-6 gap-y-2 text-sm">
+      <a href={d.originalUrl} rel="noreferrer" class="text-accent hover:text-ink underline underline-offset-4 decoration-1">
+        官方原文 ↗
+      </a>
+      {d.pdf && (
+        <a href={d.pdf} rel="noreferrer" class="text-ink-soft hover:text-accent">PDF 下载 ↗</a>
+      )}
+      {d.repo && (
+        <a href={d.repo} rel="noreferrer" class="text-ink-soft hover:text-accent">GitHub 仓库 ↗</a>
+      )}
+    </div>
+  </section>
+
+  <hr class="border-rule mx-auto max-w-3xl" />
+
+  <article class="prose-zh mx-auto px-6 py-16">
+    <Content />
+  </article>
+
+  <div class="mx-auto max-w-3xl px-6 pb-24 text-sm text-muted border-t border-rule pt-6">
+    本页为非官方注解；引用的第三方原作版权归原作者所有，仅供学习交流。
+    收到权利人请求将立即删除相关内容。
+    返回 <a href="/library" class="text-accent hover:text-ink">资料库</a>。
+  </div>
+</Base>
