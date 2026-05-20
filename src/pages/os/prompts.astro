@@ -7,7 +7,7 @@ if (!entry) throw new Error("os/prompts entry not found");
 const { Content } = await render(entry);
 const d = entry.data;
 ---
-<Base title={`${d.title} · Founder OS`} description={d.description}>
+<Base title={`${d.title} · Founder OS`} description={d.description} ogPath="os/prompts">
   <section class="mx-auto max-w-3xl px-6 pt-20 pb-8">
     <p class="text-sm text-muted tracking-wider uppercase">
       <a href="/os" class="hover:text-accent">Founder OS</a> · 工具箱

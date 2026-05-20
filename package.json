@@ -9,14 +9,20 @@
     "dev": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
-    "astro": "astro"
+    "astro": "astro",
+    "xhs": "node scripts/xhs.mjs"
   },
   "dependencies": {
     "@astrojs/mdx": "^5.0.6",
     "@astrojs/rss": "^4.0.18",
     "@astrojs/sitemap": "^3.7.2",
+    "@resvg/resvg-js": "^2.6.2",
     "@tailwindcss/vite": "^4.3.0",
     "astro": "^6.3.6",
+    "satori": "^0.26.0",
     "tailwindcss": "^4.3.0"
+  },
+  "devDependencies": {
+    "gray-matter": "^4.0.3"
   }
 }

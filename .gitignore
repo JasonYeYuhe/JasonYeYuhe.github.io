@@ -6,3 +6,7 @@ dist/
 .env
 .env.*
 !.env.example
+
+# OG font cache + XHS card output
+.cache/
+dist-xhs/

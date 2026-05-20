@@ -2,8 +2,38 @@
 import Base from "../../layouts/Base.astro";
 import { getCollection } from "astro:content";
 
+type RepoStats = { stars: number; forks: number; updated: string };
+
+async function fetchRepo(fullName: string): Promise<RepoStats | null> {
+  try {
+    const headers: Record<string, string> = { "User-Agent": "personal-site-build" };
+    if (import.meta.env.GITHUB_TOKEN) headers["Authorization"] = `Bearer ${import.meta.env.GITHUB_TOKEN}`;
+    const r = await fetch(`https://api.github.com/repos/${fullName}`, { headers });
+    if (!r.ok) return null;
+    const j: any = await r.json();
+    return {
+      stars: j.stargazers_count ?? 0,
+      forks: j.forks_count ?? 0,
+      updated: j.pushed_at ?? "",
+    };
+  } catch {
+    return null;
+  }
+}
+
 const projects = (await getCollection("projects", (e) => !e.data.draft))
   .sort((a, b) => a.data.order - b.data.order);
+
+const enriched = await Promise.all(
+  projects.map(async (p) => {
+    let stats: RepoStats | null = null;
+    if (p.data.repo) {
+      const m = p.data.repo.match(/github\.com\/([^/]+\/[^/?#]+)/);
+      if (m) stats = await fetchRepo(m[1].replace(/\.git$/, ""));
+    }
+    return { p, stats };
+  }),
+);
 ---
 <Base title="Build · Jason Ye" description="正在做与已经做过的项目。">
   <section class="mx-auto max-w-5xl px-6 pt-20 pb-10">
@@ -19,18 +49,35 @@ const projects = (await getCollection("projects", (e) => !e.data.draft))
 
   <section class="mx-auto max-w-5xl px-6 pb-24">
     <ul class="divide-y divide-rule border-t border-rule">
-      {projects.map((p, i) => (
+      {enriched.map(({ p, stats }, i) => (
         <li class="py-8 grid md:grid-cols-[4rem_1fr_auto] gap-6 items-baseline">
           <div class="font-display text-3xl text-muted tabular-nums">{String(i + 1).padStart(2, "0")}</div>
           <div>
             <p class="text-xs text-muted tracking-wider uppercase">{p.data.category} · {p.data.year}</p>
             <p class="font-display text-2xl text-ink mt-1 leading-tight">{p.data.name}</p>
             <p class="mt-2 text-sm text-ink-soft leading-relaxed">{p.data.oneLiner}</p>
-            {p.data.metric && (
-              <p class="mt-3 inline-block text-xs px-2 py-0.5 border border-rule rounded-full text-muted">
-                {p.data.metric}
-              </p>
-            )}
+            <div class="mt-3 flex flex-wrap gap-2 text-xs">
+              {stats && stats.stars > 0 && (
+                <span class="px-2 py-0.5 border border-rule rounded-full text-muted tabular-nums">
+                  ★ {stats.stars}
+                </span>
+              )}
+              {stats && stats.forks > 0 && (
+                <span class="px-2 py-0.5 border border-rule rounded-full text-muted tabular-nums">
+                  forks {stats.forks}
+                </span>
+              )}
+              {p.data.metric && (
+                <span class="px-2 py-0.5 border border-rule rounded-full text-muted">
+                  {p.data.metric}
+                </span>
+              )}
+              {stats && stats.updated && (
+                <span class="px-2 py-0.5 text-muted">
+                  最近推送 {stats.updated.slice(0, 10)}
+                </span>
+              )}
+            </div>
           </div>
           <div class="flex md:flex-col gap-3 text-sm">
             {p.data.url && (

@@ -5,6 +5,9 @@ import { getCollection } from "astro:content";
 const items = (await getCollection("library", (e) => !e.data.draft))
   .sort((a, b) => +b.data.date - +a.data.date)
   .slice(0, 3);
+const writing = (await getCollection("writing", (e) => !e.data.draft))
+  .sort((a, b) => +b.data.date - +a.data.date)
+  .slice(0, 3);
 ---
 <Base title="Jason Ye · Founder OS" description="把一线 AI 原始资料做成中文创始人可用的操作系统。资料库 · 方法论 · 在做的项目。">
   <!-- Hero -->
@@ -63,7 +66,7 @@ const items = (await getCollection("library", (e) => !e.data.draft))
   <!-- Latest from Library -->
   <section class="mx-auto max-w-5xl px-6 py-20">
     <div class="flex items-baseline justify-between mb-10">
-      <h2 class="font-display text-3xl text-ink">最新</h2>
+      <h2 class="font-display text-3xl text-ink">资料库最新</h2>
       <a href="/library" class="text-sm text-accent hover:text-ink">全部 →</a>
     </div>
     <ul class="divide-y divide-rule">
@@ -88,4 +91,32 @@ const items = (await getCollection("library", (e) => !e.data.draft))
       ))}
     </ul>
   </section>
+
+  {writing.length > 0 && (
+    <>
+      <hr class="border-rule" />
+      <section class="mx-auto max-w-5xl px-6 py-20">
+        <div class="flex items-baseline justify-between mb-10">
+          <h2 class="font-display text-3xl text-ink">手记</h2>
+          <a href="/writing" class="text-sm text-accent hover:text-ink">全部 →</a>
+        </div>
+        <ul class="divide-y divide-rule">
+          {writing.map((p) => (
+            <li class="py-6 grid md:grid-cols-[10rem_1fr] gap-4">
+              <p class="text-sm text-muted tabular-nums">{p.data.date.toISOString().slice(0, 10)}</p>
+              <div>
+                <a href={`/writing/${p.id}`} class="block font-display text-xl text-ink hover:text-accent">
+                  {p.data.title}
+                </a>
+                {p.data.subtitle && (
+                  <p class="mt-1 text-sm italic text-muted">{p.data.subtitle}</p>
+                )}
+                <p class="mt-2 text-sm text-ink-soft leading-relaxed">{p.data.summary}</p>
+              </div>
+            </li>
+          ))}
+        </ul>
+      </section>
+    </>
+  )}
 </Base>

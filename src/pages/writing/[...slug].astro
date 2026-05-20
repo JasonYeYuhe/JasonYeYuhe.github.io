@@ -1,0 +1,43 @@
+---
+import Base from "../../layouts/Base.astro";
+import { getCollection, render } from "astro:content";
+
+export async function getStaticPaths() {
+  const posts = await getCollection("writing", (e) => !e.data.draft);
+  return posts.map((post) => ({ params: { slug: post.id }, props: { post } }));
+}
+
+const { post } = Astro.props;
+const { Content } = await render(post);
+const d = post.data;
+---
+<Base title={`${d.title} · Writing · Jason Ye`} description={d.summary} ogPath={`writing/${post.id}`}>
+  <section class="mx-auto max-w-3xl px-6 pt-20 pb-8">
+    <p class="text-sm text-muted tracking-wider uppercase">
+      <a href="/writing" class="hover:text-accent">Writing</a> · {d.kind}
+    </p>
+    <h1 class="font-display mt-3 leading-tight text-ink" style="font-size: var(--text-display-xl)">
+      {d.title}
+    </h1>
+    {d.subtitle && <p class="mt-2 text-muted italic">{d.subtitle}</p>}
+    <p class="mt-4 text-sm text-muted">
+      {d.date.toISOString().slice(0, 10)}
+      {d.canonical && (
+        <> · <a href={d.canonical} rel="noreferrer" class="text-accent hover:text-ink">原始发布 ↗</a></>
+      )}
+    </p>
+  </section>
+
+  <hr class="border-rule mx-auto max-w-3xl" />
+
+  <article class="prose-zh mx-auto px-6 py-16">
+    <Content />
+  </article>
+
+  <div class="mx-auto max-w-3xl px-6 pb-24">
+    <div class="border-t border-rule pt-6 flex items-baseline justify-between text-sm">
+      <a href="/writing" class="text-ink-soft hover:text-accent">← 回手记</a>
+      <a href="/rss.xml" class="text-accent hover:text-ink">订阅 RSS →</a>
+    </div>
+  </div>
+</Base>

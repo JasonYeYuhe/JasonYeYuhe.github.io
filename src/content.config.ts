@@ -47,4 +47,32 @@ const projects = defineCollection({
   }),
 });
 
-export const collections = { library, os, projects };
+const writing = defineCollection({
+  loader: glob({ pattern: "**/*.{md,mdx}", base: "./src/content/writing" }),
+  schema: z.object({
+    title: z.string(),
+    subtitle: z.string().optional(),
+    date: z.coerce.date(),
+    tags: z.array(z.string()).default([]),
+    kind: z.enum(["note", "essay", "xhs"]).default("essay"),
+    canonical: z.string().url().optional(),     // 原始发布地（小红书 / 公众号）
+    summary: z.string(),
+    pinned: z.boolean().default(false),
+    draft: z.boolean().default(false),
+    xhs: z
+      .object({
+        cards: z
+          .array(
+            z.object({
+              title: z.string().optional(),
+              body: z.string(),
+              footer: z.string().optional(),
+            }),
+          )
+          .default([]),
+      })
+      .optional(),
+  }),
+});
+
+export const collections = { library, os, projects, writing };

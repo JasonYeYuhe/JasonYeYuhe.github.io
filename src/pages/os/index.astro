@@ -7,7 +7,7 @@ if (!entry) throw new Error("os/guide entry not found");
 const { Content } = await render(entry);
 const d = entry.data;
 ---
-<Base title={`${d.title} · Jason Ye`} description={d.description}>
+<Base title={`${d.title} · Jason Ye`} description={d.description} ogPath="os/guide">
   <section class="mx-auto max-w-3xl px-6 pt-20 pb-8">
     <p class="text-sm text-muted tracking-wider uppercase">Founder OS</p>
     <h1 class="font-display mt-3 leading-tight text-ink" style="font-size: var(--text-display-xl)">
