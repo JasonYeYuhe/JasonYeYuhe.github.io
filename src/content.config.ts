@@ -61,11 +61,14 @@ const writing = defineCollection({
     draft: z.boolean().default(false),
     xhs: z
       .object({
+        style: z.enum(["light", "dark"]).default("light"),
         cards: z
           .array(
             z.object({
+              kind: z.enum(["content", "quote"]).default("content"),
               title: z.string().optional(),
               body: z.string(),
+              attribution: z.string().optional(),
               footer: z.string().optional(),
             }),
           )

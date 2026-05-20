@@ -1,0 +1,28 @@
+---
+import { analytics } from "../analytics.config";
+---
+{analytics.provider === "plausible" && (
+  <script
+    defer
+    is:inline
+    data-domain={analytics.id}
+    src={analytics.scriptUrl ?? "https://plausible.io/js/script.js"}
+  />
+)}
+{analytics.provider === "umami" && (
+  <script
+    async
+    defer
+    is:inline
+    data-website-id={analytics.id}
+    src={analytics.scriptUrl}
+  />
+)}
+{analytics.provider === "goatcounter" && (
+  <script
+    async
+    is:inline
+    data-goatcounter={analytics.scriptUrl}
+    src="//gc.zgo.at/count.js"
+  />
+)}

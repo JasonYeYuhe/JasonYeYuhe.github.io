@@ -7,7 +7,13 @@ kind: "note"
 summary: "这个站不是另一个 AI 教程站，是我自己的 founder operating system 的对外入口。资料库收的是一线官方资料的注解，OS 是我的方法论，Build 是我的真实项目。"
 pinned: true
 xhs:
+  style: light
   cards:
+    - kind: quote
+      body: |-
+        AI 把创业瓶颈从「能不能做」推到了「该不该做」。
+        创始人的稀缺能力，不是让 AI 更快写代码，而是把判断变成系统。
+      attribution: Founder OS · 第 0 条
     - title: 1 · 它不是什么
       body: |-
         不是 AI 教程站。

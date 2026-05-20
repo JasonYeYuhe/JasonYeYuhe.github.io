@@ -1,6 +1,74 @@
 ---
 import Base from "../layouts/Base.astro";
-const updated = "2026-05-20";
+
+const updated = "2026-05-21";
+
+type Event = {
+  id: string;
+  type: string;
+  repo: { name: string };
+  created_at: string;
+  payload: any;
+};
+
+async function fetchActivity(user: string): Promise<Event[]> {
+  try {
+    const headers: Record<string, string> = {
+      "User-Agent": "personal-site-build",
+      Accept: "application/vnd.github+json",
+    };
+    if (import.meta.env.GITHUB_TOKEN) headers["Authorization"] = `Bearer ${import.meta.env.GITHUB_TOKEN}`;
+    const r = await fetch(`https://api.github.com/users/${user}/events/public`, { headers });
+    if (!r.ok) return [];
+    return (await r.json()) as Event[];
+  } catch {
+    return [];
+  }
+}
+
+function describe(e: Event): { when: string; what: string; href: string } {
+  const when = e.created_at.slice(0, 10);
+  const repo = e.repo.name;
+  const href = `https://github.com/${repo}`;
+  switch (e.type) {
+    case "PushEvent": {
+      const n = e.payload?.commits?.length ?? 0;
+      const ref = String(e.payload?.ref ?? "").replace("refs/heads/", "");
+      return {
+        when,
+        what: `推送 ${n} 个 commit 到 ${repo}${ref ? `（${ref}）` : ""}`,
+        href,
+      };
+    }
+    case "CreateEvent": {
+      const kind = e.payload?.ref_type ?? "ref";
+      const ref = e.payload?.ref ?? "";
+      const label = kind === "repository" ? "仓库" : kind === "branch" ? "分支" : kind === "tag" ? "标签" : kind;
+      return {
+        when,
+        what: `新建${label}${ref ? ` ${ref}` : ""} · ${repo}`,
+        href,
+      };
+    }
+    case "PullRequestEvent":
+      return { when, what: `${e.payload?.action ?? "更新"} PR · ${repo}`, href };
+    case "ReleaseEvent":
+      return { when, what: `发布 release · ${repo}`, href };
+    case "IssuesEvent":
+      return { when, what: `${e.payload?.action ?? "更新"} issue · ${repo}`, href };
+    case "WatchEvent":
+      return { when, what: `star · ${repo}`, href };
+    default:
+      return { when, what: `${e.type.replace(/Event$/, "")} · ${repo}`, href };
+  }
+}
+
+const activity = (await fetchActivity("JasonYeYuhe"))
+  .filter((e) =>
+    ["PushEvent", "PullRequestEvent", "CreateEvent", "ReleaseEvent", "IssuesEvent"].includes(e.type),
+  )
+  .slice(0, 8)
+  .map(describe);
 ---
 <Base title="Now · Jason Ye" description="Jason 最近在做的事。">
   <section class="mx-auto max-w-3xl px-6 pt-20 pb-12">
@@ -37,4 +105,24 @@ const updated = "2026-05-20";
       代替关于页里那些不会更新的「最新动态」。
     </p>
   </article>
+
+  {activity.length > 0 && (
+    <section class="mx-auto max-w-3xl px-6 pb-24">
+      <div class="border-t border-rule pt-10 flex items-baseline justify-between mb-6">
+        <h2 class="font-display text-2xl text-ink">GitHub 上的活动</h2>
+        <a href="https://github.com/JasonYeYuhe" class="text-sm text-accent hover:text-ink">@JasonYeYuhe ↗</a>
+      </div>
+      <ul class="divide-y divide-rule text-sm">
+        {activity.map((a) => (
+          <li class="py-3 grid grid-cols-[6.5rem_1fr] gap-4">
+            <span class="text-muted tabular-nums">{a.when}</span>
+            <a href={a.href} rel="noreferrer" class="text-ink-soft hover:text-accent">{a.what}</a>
+          </li>
+        ))}
+      </ul>
+      <p class="mt-4 text-xs text-muted">
+        构建时从 GitHub Events API 拉取的最近公开活动。每次部署刷新。
+      </p>
+    </section>
+  )}
 </Base>
