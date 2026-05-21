@@ -9,16 +9,30 @@ interface Props {
   description?: string;
   noindex?: boolean;
   ogPath?: string;   // path under /og/, e.g. "library/founders-playbook" or "default"
+  jsonLd?: Record<string, unknown>;   // page-specific structured data (e.g. Article)
 }
 const {
   title,
   description = "中文 AI builder 的资料库与方法论 — Jason Ye。",
   noindex = false,
   ogPath = "default",
+  jsonLd,
 } = Astro.props;
 const site = Astro.site?.toString() ?? "https://JasonYeYuhe.github.io";
 const canonical = new URL(Astro.url.pathname, site).toString();
 const ogImage = new URL(`/og/${ogPath}.png`, site).toString();
+
+const person = {
+  "@context": "https://schema.org",
+  "@type": "Person",
+  name: "Jason Ye",
+  alternateName: "叶宇贺",
+  url: site,
+  sameAs: ["https://github.com/JasonYeYuhe"],
+  jobTitle: "AI-native builder",
+  description: "中文 AI builder · Founder OS 作者",
+};
+const structured = [person, ...(jsonLd ? [jsonLd] : [])];
 ---
 <!doctype html>
 <html lang="zh-Hans">
@@ -47,6 +61,7 @@ const ogImage = new URL(`/og/${ogPath}.png`, site).toString();
       href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap"
     />
     <Analytics />
+    <script type="application/ld+json" is:inline set:html={JSON.stringify(structured)} />
   </head>
   <body class="min-h-screen flex flex-col bg-paper text-ink">
     <Header />

@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://jasonyeyuhe.github.io/sitemap-index.xml

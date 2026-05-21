@@ -10,8 +10,18 @@ export async function getStaticPaths() {
 const { post } = Astro.props;
 const { Content } = await render(post);
 const d = post.data;
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  headline: d.title,
+  description: d.summary,
+  datePublished: d.date.toISOString(),
+  inLanguage: "zh-Hans",
+  author: { "@type": "Person", name: "Jason Ye" },
+  keywords: d.tags.join(", "),
+};
 ---
-<Base title={`${d.title} · Writing · Jason Ye`} description={d.summary} ogPath={`writing/${post.id}`}>
+<Base title={`${d.title} · Writing · Jason Ye`} description={d.summary} ogPath={`writing/${post.id}`} jsonLd={jsonLd}>
   <section class="mx-auto max-w-3xl px-6 pt-20 pb-8">
     <p class="text-sm text-muted tracking-wider uppercase">
       <a href="/writing" class="hover:text-accent">Writing</a> · {d.kind}

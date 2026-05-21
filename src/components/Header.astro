@@ -12,16 +12,16 @@ const isActive = (href: string) =>
   href === "/" ? path === "/" : path === href || path.startsWith(href + "/");
 ---
 <header class="border-b border-rule">
-  <div class="mx-auto max-w-5xl px-6 py-6 flex items-baseline justify-between">
-    <a href="/" class="font-display text-xl tracking-tight hover:text-accent">
-      Jason Ye <span class="text-muted font-sans text-sm">· Founder OS</span>
+  <div class="mx-auto max-w-5xl px-6 py-5 sm:py-6 flex flex-col gap-3 sm:flex-row sm:items-baseline sm:justify-between">
+    <a href="/" class="font-display text-xl tracking-tight hover:text-accent shrink-0">
+      Jason Ye <span class="text-muted font-sans text-sm hidden sm:inline">· Founder OS</span>
     </a>
-    <nav class="flex gap-7 text-sm">
+    <nav class="flex flex-wrap gap-x-5 gap-y-1 text-sm -mx-1">
       {nav.map(({ href, label }) => (
         <a
           href={href}
           class:list={[
-            "transition-colors",
+            "px-1 transition-colors",
             isActive(href) ? "text-accent" : "text-ink-soft hover:text-accent",
           ]}
         >

@@ -10,7 +10,8 @@
     "build": "astro build",
     "preview": "astro preview",
     "astro": "astro",
-    "xhs": "node scripts/xhs.mjs"
+    "xhs": "node scripts/xhs.mjs",
+    "new": "node scripts/new.mjs"
   },
   "dependencies": {
     "@astrojs/mdx": "^5.0.6",

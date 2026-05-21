@@ -10,8 +10,19 @@ export async function getStaticPaths() {
 const { entry } = Astro.props;
 const { Content } = await render(entry);
 const d = entry.data;
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "TechArticle",
+  headline: d.title,
+  description: d.summary,
+  datePublished: d.date.toISOString(),
+  inLanguage: "zh-Hans",
+  author: { "@type": "Person", name: "Jason Ye" },
+  isBasedOn: d.originalUrl,
+  keywords: [...d.stage, ...d.tags].join(", "),
+};
 ---
-<Base title={`${d.title} · Library`} description={d.summary} ogPath={`library/${entry.id}`}>
+<Base title={`${d.title} · Library`} description={d.summary} ogPath={`library/${entry.id}`} jsonLd={jsonLd}>
   <section class="mx-auto max-w-3xl px-6 pt-20 pb-8">
     <p class="text-sm text-muted tracking-wider uppercase">
       <a href="/library" class="hover:text-accent">Library</a> · {d.source}

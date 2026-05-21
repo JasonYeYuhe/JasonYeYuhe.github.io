@@ -1,0 +1,25 @@
+---
+import Base from "../layouts/Base.astro";
+const links = [
+  { href: "/", label: "首页" },
+  { href: "/library", label: "资料库" },
+  { href: "/os", label: "Founder OS" },
+  { href: "/writing", label: "手记" },
+];
+---
+<Base title="404 · 页面不存在 · Jason Ye" description="这个页面不存在。" noindex={true}>
+  <section class="mx-auto max-w-3xl px-6 pt-32 pb-40 text-center">
+    <p class="font-display text-muted" style="font-size: var(--text-display-2xl)">404</p>
+    <h1 class="font-display mt-4 text-ink" style="font-size: var(--text-display-xl)">
+      这里没有东西
+    </h1>
+    <p class="mt-4 text-ink-soft">
+      链接可能过期了，或者它从来不存在。回到有内容的地方吧。
+    </p>
+    <div class="mt-10 flex flex-wrap justify-center gap-x-7 gap-y-2 text-sm">
+      {links.map(({ href, label }) => (
+        <a href={href} class="text-accent hover:text-ink">{label}</a>
+      ))}
+    </div>
+  </section>
+</Base>
