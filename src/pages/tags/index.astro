@@ -1,0 +1,36 @@
+---
+import Base from "../../layouts/Base.astro";
+import { getTagMap } from "../../lib/tags";
+
+const map = await getTagMap();
+const tags = [...map.entries()]
+  .map(([tag, items]) => ({ tag, count: items.length }))
+  .sort((a, b) => b.count - a.count || a.tag.localeCompare(b.tag));
+const maxCount = Math.max(...tags.map((t) => t.count), 1);
+const sizeFor = (n: number) => 0.9 + (n / maxCount) * 0.9; // rem, weight by frequency
+---
+<Base title="Tags · Jason Ye" description="按标签浏览资料库与手记。">
+  <section class="mx-auto max-w-3xl px-6 pt-20 pb-10">
+    <p class="text-sm text-muted tracking-wider uppercase">Tags</p>
+    <h1 class="font-display mt-3 leading-tight text-ink" style="font-size: var(--text-display-xl)">
+      标签
+    </h1>
+    <p class="mt-4 max-w-2xl text-ink-soft leading-relaxed">
+      跨「资料库」与「手记」的主题索引。字号越大，相关内容越多。
+    </p>
+  </section>
+
+  <section class="mx-auto max-w-3xl px-6 pb-24">
+    <div class="flex flex-wrap gap-x-5 gap-y-3 items-baseline border-t border-rule pt-8">
+      {tags.map(({ tag, count }) => (
+        <a
+          href={`/tags/${encodeURIComponent(tag)}`}
+          class="text-ink-soft hover:text-accent transition-colors"
+          style={`font-size:${sizeFor(count)}rem`}
+        >
+          {tag}<span class="text-muted text-xs align-super ml-0.5">{count}</span>
+        </a>
+      ))}
+    </div>
+  </section>
+</Base>

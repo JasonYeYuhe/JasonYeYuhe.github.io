@@ -3,13 +3,31 @@ import Base from "../../layouts/Base.astro";
 import { getCollection, render } from "astro:content";
 
 export async function getStaticPaths() {
-  const posts = await getCollection("writing", (e) => !e.data.draft);
-  return posts.map((post) => ({ params: { slug: post.id }, props: { post } }));
+  const posts = (await getCollection("writing", (e) => !e.data.draft)).sort(
+    (a, b) => +b.data.date - +a.data.date,
+  );
+  return posts.map((post, i) => ({
+    params: { slug: post.id },
+    props: {
+      post,
+      // newest-first order: "newer" is the previous index, "older" is the next
+      newer: i > 0 ? posts[i - 1] : null,
+      older: i < posts.length - 1 ? posts[i + 1] : null,
+    },
+  }));
 }
 
-const { post } = Astro.props;
+const { post, newer, older } = Astro.props;
 const { Content } = await render(post);
 const d = post.data;
+
+// reading time: count CJK chars + latin words, ~400 cjk-equiv/min
+const raw = (post.body ?? "").replace(/[#>*`_\-\[\]()!]/g, " ");
+const cjk = (raw.match(/[㐀-鿿]/g) ?? []).length;
+const words = (raw.match(/[A-Za-z0-9]+/g) ?? []).length;
+const minutes = Math.max(1, Math.round((cjk + words * 1.2) / 400));
+
+const link = (id: string) => `/writing/${id}`;
 const jsonLd = {
   "@context": "https://schema.org",
   "@type": "BlogPosting",
@@ -31,11 +49,18 @@ const jsonLd = {
     </h1>
     {d.subtitle && <p class="mt-2 text-muted italic">{d.subtitle}</p>}
     <p class="mt-4 text-sm text-muted">
-      {d.date.toISOString().slice(0, 10)}
+      {d.date.toISOString().slice(0, 10)} · 约 {minutes} 分钟
       {d.canonical && (
         <> · <a href={d.canonical} rel="noreferrer" class="text-accent hover:text-ink">原始发布 ↗</a></>
       )}
     </p>
+    {d.tags.length > 0 && (
+      <div class="mt-4 flex flex-wrap gap-2 text-xs text-muted">
+        {d.tags.map((t) => (
+          <a href={`/tags/${encodeURIComponent(t.toLowerCase())}`} class="px-2 py-0.5 border border-rule rounded-full hover:text-accent hover:border-accent transition-colors">#{t}</a>
+        ))}
+      </div>
+    )}
   </section>
 
   <hr class="border-rule mx-auto max-w-3xl" />
@@ -45,7 +70,23 @@ const jsonLd = {
   </article>
 
   <div class="mx-auto max-w-3xl px-6 pb-24">
-    <div class="border-t border-rule pt-6 flex items-baseline justify-between text-sm">
+    {(newer || older) && (
+      <nav class="grid sm:grid-cols-2 gap-4 border-t border-rule pt-8">
+        {older ? (
+          <a href={link(older.id)} class="group">
+            <p class="text-xs text-muted tracking-wider uppercase">← 更早</p>
+            <p class="mt-1 font-display text-lg text-ink-soft group-hover:text-accent leading-snug">{older.data.title}</p>
+          </a>
+        ) : <span />}
+        {newer ? (
+          <a href={link(newer.id)} class="group sm:text-right">
+            <p class="text-xs text-muted tracking-wider uppercase">更新 →</p>
+            <p class="mt-1 font-display text-lg text-ink-soft group-hover:text-accent leading-snug">{newer.data.title}</p>
+          </a>
+        ) : <span />}
+      </nav>
+    )}
+    <div class="border-t border-rule mt-8 pt-6 flex items-baseline justify-between text-sm">
       <a href="/writing" class="text-ink-soft hover:text-accent">← 回手记</a>
       <a href="/rss.xml" class="text-accent hover:text-ink">订阅 RSS →</a>
     </div>

@@ -55,7 +55,7 @@ const rest = posts.filter((p) => !p.data.pinned);
                 <p class="mt-1 text-sm text-ink-soft leading-relaxed">{p.data.summary}</p>
                 <div class="mt-2 flex flex-wrap gap-2 text-xs text-muted">
                   {p.data.tags.map((t) => (
-                    <span class="px-2 py-0.5 border border-rule rounded-full">{t}</span>
+                    <a href={`/tags/${encodeURIComponent(t.toLowerCase())}`} class="px-2 py-0.5 border border-rule rounded-full hover:text-accent hover:border-accent transition-colors">{t}</a>
                   ))}
                 </div>
               </div>

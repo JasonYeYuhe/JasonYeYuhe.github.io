@@ -24,9 +24,24 @@ const statusLabel: Record<string, string> = {
   </section>
 
   <section class="mx-auto max-w-5xl px-6 pb-24">
-    <ul class="divide-y divide-rule border-t border-rule">
+    <div id="stage-filter" class="flex flex-wrap gap-2 mb-6 text-sm">
+      {["全部", "Idea", "MVP", "Launch", "Scale"].map((s, i) => (
+        <button
+          type="button"
+          data-stage={i === 0 ? "all" : s.toLowerCase()}
+          class="stage-btn px-3 py-1 border border-rule rounded-full text-ink-soft hover:border-accent hover:text-accent transition-colors aria-[current=true]:bg-ink aria-[current=true]:text-paper aria-[current=true]:border-ink"
+          aria-current={i === 0 ? "true" : "false"}
+        >
+          {s}
+        </button>
+      ))}
+    </div>
+    <ul id="lib-list" class="divide-y divide-rule border-t border-rule">
       {items.map((item) => (
-        <li class="py-8 grid md:grid-cols-[12rem_1fr_auto] gap-6 items-baseline">
+        <li
+          class="lib-item py-8 grid md:grid-cols-[12rem_1fr_auto] gap-6 items-baseline"
+          data-stages={item.data.stage.map((s) => s.toLowerCase()).join(" ")}
+        >
           <div class="text-sm text-muted">
             <p class="text-ink-soft">{item.data.source}</p>
             <p>{item.data.date.toISOString().slice(0, 10)}</p>
@@ -66,4 +81,21 @@ const statusLabel: Record<string, string> = {
       原作版权归各原作者所有；任何条目，收到权利人请求即删。
     </p>
   </section>
+
+  <script>
+    // Progressive enhancement: filter library items by stage. Without JS,
+    // all items are visible and the buttons simply don't appear interactive.
+    const btns = Array.from(document.querySelectorAll<HTMLButtonElement>(".stage-btn"));
+    const items = Array.from(document.querySelectorAll<HTMLLIElement>(".lib-item"));
+    function apply(stage: string) {
+      for (const li of items) {
+        const stages = (li.dataset.stages ?? "").split(" ");
+        li.style.display = stage === "all" || stages.includes(stage) ? "" : "none";
+      }
+      for (const b of btns) b.setAttribute("aria-current", String(b.dataset.stage === stage));
+    }
+    for (const b of btns) {
+      b.addEventListener("click", () => apply(b.dataset.stage ?? "all"));
+    }
+  </script>
 </Base>

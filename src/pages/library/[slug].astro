@@ -42,7 +42,7 @@ const jsonLd = {
         <span class="px-2 py-0.5 border border-rule rounded-full">{s}</span>
       ))}
       {d.tags.map((t: string) => (
-        <span class="px-2 py-0.5 text-muted">#{t}</span>
+        <a href={`/tags/${encodeURIComponent(t.toLowerCase())}`} class="px-2 py-0.5 text-muted hover:text-accent transition-colors">#{t}</a>
       ))}
     </div>
 
