@@ -35,6 +35,69 @@ export const COLORS = {
   rule: "#D9D0BE",
 };
 
+// ---- CJK line-break (避头尾) so Satori never drops a lone punctuation mark
+// onto its own line, and never splits a Latin word mid-way.
+const NO_LINE_START = "。，、；：？！）】」』〉》”’%·…〕｝";
+const NO_LINE_END = "（【「『〈《“‘〔｛";
+const isWide = (ch: string) => {
+  const c = ch.codePointAt(0)!;
+  return (
+    (c >= 0x1100 && c <= 0x115f) || (c >= 0x2e80 && c <= 0x303e) ||
+    (c >= 0x3041 && c <= 0x33ff) || (c >= 0x3400 && c <= 0x9fff) ||
+    (c >= 0xf900 && c <= 0xfaff) || (c >= 0xff00 && c <= 0xff60) ||
+    (c >= 0xffe0 && c <= 0xffe6)
+  );
+};
+const isLatin = (ch: string) => {
+  const c = ch.codePointAt(0)!;
+  return (c >= 0x30 && c <= 0x39) || (c >= 0x41 && c <= 0x5a) || (c >= 0x61 && c <= 0x7a);
+};
+const charW = (ch: string, fs: number) => (ch === " " ? fs * 0.3 : isWide(ch) ? fs : fs * 0.6);
+function tokenize(s: string): string[] {
+  const toks: string[] = [];
+  let i = 0;
+  while (i < s.length) {
+    const ch = s[i];
+    if (ch === " ") { toks.push(" "); i++; }
+    else if (isLatin(ch)) {
+      let j = i + 1;
+      while (j < s.length && (isLatin(s[j]) || "._-/+&#".includes(s[j]))) j++;
+      toks.push(s.slice(i, j)); i = j;
+    } else { toks.push(ch); i++; }
+  }
+  return toks;
+}
+const tokW = (t: string, fs: number) => [...t].reduce((a, c) => a + charW(c, fs), 0);
+export function wrapCJK(text: string, fontSize: number, maxWidth: number): string {
+  const lines: string[] = [];
+  for (const para of String(text).split("\n")) {
+    if (para === "") { lines.push(""); continue; }
+    let line = "", w = 0;
+    for (const tok of tokenize(para)) {
+      const tw = tokW(tok, fontSize);
+      if (tok === " ") {
+        if (line === "") continue;
+        if (w + tw > maxWidth) { lines.push(line); line = ""; w = 0; continue; }
+        line += " "; w += tw; continue;
+      }
+      if (w + tw > maxWidth && line !== "") {
+        if (tok.length === 1 && NO_LINE_START.includes(tok)) {
+          line += tok; lines.push(line); line = ""; w = 0; continue;
+        }
+        while (line.length && line[line.length - 1] === " ") line = line.slice(0, -1);
+        let moved = "";
+        while (line.length && NO_LINE_END.includes(line[line.length - 1])) {
+          moved = line[line.length - 1] + moved; line = line.slice(0, -1);
+        }
+        lines.push(line); line = moved + tok; w = tokW(line, fontSize); continue;
+      }
+      line += tok; w += tw;
+    }
+    if (line !== "") lines.push(line);
+  }
+  return lines.join("\n");
+}
+
 export type OgInput = {
   kicker: string;      // e.g. "LIBRARY · ANTHROPIC"
   title: string;       // big title
@@ -80,8 +143,9 @@ export function ogTree(input: OgInput) {
               maxWidth: "1040px",
               fontFamily: "serif",
               color: COLORS.ink,
+              whiteSpace: "pre-wrap",
             },
-            children: input.title,
+            children: wrapCJK(input.title, input.title.length > 24 ? 60 : 78, 1010),
           },
         },
         ...(input.meta
@@ -95,8 +159,9 @@ export function ogTree(input: OgInput) {
                     marginTop: "28px",
                     maxWidth: "1040px",
                     fontFamily: "serif",
+                    whiteSpace: "pre-wrap",
                   },
-                  children: input.meta,
+                  children: wrapCJK(input.meta, 26, 1010),
                 },
               },
             ]
