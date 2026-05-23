@@ -1,0 +1,152 @@
+---
+import Base from "../layouts/Base.astro";
+
+const services = [
+  {
+    eyebrow: "01",
+    title: "Founder OS · 1v1",
+    summary:
+      "你在做 AI-native 产品，卡在「idea 该不该做」「MVP 该砍到多小」「验证算不算数」这类判断题上。我陪你把项目接到 Founder OS 四阶段框架里，给出一份你能直接用的取舍清单。",
+    deliverable: [
+      "90 分钟视频通话（中文）",
+      "通话前书面问卷，确保 90 分钟全用在判断上",
+      "通话后 48 小时内：纪要 + 行动清单（Markdown）",
+    ],
+    price: "¥1,500 / ¥30,000 JPY / $200",
+    priceNote: "单次",
+  },
+  {
+    eyebrow: "02",
+    title: "Agent Workflow 落地",
+    summary:
+      "你的团队已经在用 Claude Code / Codex，但缺一套可复用的上下文层（CLAUDE.md、specs/、decisions/、workflows/），导致每个新项目都要重启 prompt 工程。我帮你把这层搭好。",
+    deliverable: [
+      "2–3 周 part-time，按你节奏推",
+      "交付：项目上下文层 + Prompt 库 + 1 条自动化闭环",
+      "结束后 2 周内 1 次免费 follow-up",
+    ],
+    price: "¥30,000 – ¥80,000",
+    priceNote: "单项目，按复杂度",
+  },
+  {
+    eyebrow: "03",
+    title: "资料 / 内容委托",
+    summary:
+      "你有一份英文 AI 资料想做成中文 founder 能直接抄的版本；或一套方法论想做成可分发到小红书 / 公众号的内容资产。这两件事我自己每周都在做。",
+    deliverable: [
+      "范围：摘要 + 注解 + 原文链接 + 可选 PDF/小红书图",
+      "可二次创作授权",
+      "工时透明，按 milestone 报价",
+    ],
+    price: "按范围聊",
+    priceNote: "先发邮件描述你的需求",
+  },
+];
+
+const notServices = [
+  "现成模板套壳类的 MVP 外包",
+  "一次性提示词调优（先免费读 /os/prompts）",
+  "我不熟悉行业的合规咨询（金融监管 / 医疗）",
+  "无法公开复用的「黑箱」需求",
+];
+---
+
+<Base
+  title="Services · Jason Ye"
+  description="可以买到我的时间帮你做的三件事：Founder OS 1v1、Agent Workflow 落地、资料/内容委托。"
+>
+  <!-- Hero -->
+  <section class="mx-auto max-w-5xl px-6 pt-20 pb-16">
+    <p class="text-sm text-muted tracking-wider uppercase">Services · 合作 / 咨询</p>
+    <h1
+      class="font-display mt-4 leading-[1.1] tracking-tight text-ink"
+      style="font-size: var(--text-display-xl)"
+    >
+      把判断与工作流，<br />复用进你的项目。
+    </h1>
+    <p class="mt-8 max-w-2xl text-lg text-ink-soft leading-relaxed">
+      Founder OS 是我自己在用的方法论。下面三件事，是你可以买到我的时间，
+      让我直接帮你做的。明码标价、不卖加急、按 milestone 推进。
+    </p>
+  </section>
+
+  <hr class="border-rule" />
+
+  <!-- Three services -->
+  <section class="mx-auto max-w-5xl px-6 py-20 space-y-16">
+    {services.map((s) => (
+      <article class="grid gap-8 md:grid-cols-[10rem_1fr]">
+        <div>
+          <p class="font-display text-muted tabular-nums">{s.eyebrow}</p>
+        </div>
+        <div>
+          <h2 class="font-display text-2xl text-ink leading-tight">{s.title}</h2>
+          <p class="mt-3 text-ink-soft leading-relaxed">{s.summary}</p>
+
+          <ul class="mt-5 space-y-1.5 text-sm text-ink-soft">
+            {s.deliverable.map((d) => (
+              <li class="pl-4 relative">
+                <span class="absolute left-0 text-accent font-bold">·</span>
+                {d}
+              </li>
+            ))}
+          </ul>
+
+          <div class="mt-6 flex flex-wrap items-baseline gap-x-4 gap-y-1">
+            <p class="font-display text-xl text-ink tabular-nums">{s.price}</p>
+            <p class="text-sm text-muted">{s.priceNote}</p>
+          </div>
+        </div>
+      </article>
+    ))}
+  </section>
+
+  <hr class="border-rule" />
+
+  <!-- Not services -->
+  <section class="mx-auto max-w-5xl px-6 py-20 grid gap-10 md:grid-cols-[10rem_1fr]">
+    <p class="font-display text-muted tracking-wider uppercase text-sm">不接</p>
+    <div>
+      <p class="text-ink-soft leading-relaxed max-w-2xl">
+        坦诚说，下面这几类我不接——不是不能做，是做了对你没杠杆，或者我不是最佳人选。
+      </p>
+      <ul class="mt-5 space-y-1.5 text-sm text-ink-soft">
+        {notServices.map((n) => (
+          <li class="pl-4 relative">
+            <span class="absolute left-0 text-muted">×</span>
+            {n}
+          </li>
+        ))}
+      </ul>
+    </div>
+  </section>
+
+  <hr class="border-rule" />
+
+  <!-- How to start -->
+  <section class="mx-auto max-w-5xl px-6 py-20 grid gap-10 md:grid-cols-[10rem_1fr]">
+    <p class="font-display text-muted tracking-wider uppercase text-sm">怎么开始</p>
+    <div class="max-w-2xl">
+      <p class="text-ink-soft leading-relaxed">
+        发一封邮件给
+        <a
+          href="mailto:yyyyy.yeyuhe@gmail.com?subject=Founder%20OS%20%E5%92%A8%E8%AF%A2"
+          class="text-accent underline underline-offset-4 decoration-1 hover:text-ink"
+        >yyyyy.yeyuhe@gmail.com</a>，
+        用 3–5 句话说清楚：你在做什么 · 卡在哪一步 · 想要哪一项服务。
+        48 小时内回信，可能会先反问几个问题再报价。
+      </p>
+      <p class="mt-5 text-sm text-muted leading-relaxed">
+        时区 JST。远程为主。可接受人民币 / 日元 / 美元结算。
+        如果你已经在小红书或 GitHub 上和我有过互动，邮件里提一下，会快很多。
+      </p>
+
+      <a
+        href="mailto:yyyyy.yeyuhe@gmail.com?subject=Founder%20OS%20%E5%92%A8%E8%AF%A2"
+        class="mt-10 inline-flex items-center gap-2 border border-rule px-5 py-3 text-sm hover:border-accent hover:text-accent transition-colors"
+      >
+        发邮件 →
+      </a>
+    </div>
+  </section>
+</Base>
